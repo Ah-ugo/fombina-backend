@@ -602,6 +602,7 @@ async def register_user(user_data: UserRegister):
     }
 
 
+
 @app.post("/api/auth/reset-password-request")
 async def request_password_reset(reset_request: PasswordResetRequest):
     """Request password reset"""
