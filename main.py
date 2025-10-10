@@ -20,10 +20,11 @@ from database import (
     get_timeline_collection,
     get_messages_collection,
     get_admins_collection,
+    get_applications_collection,
 )
 from services.cloudinary_service import upload_image, delete_image
 from services.email_service import send_booking_confirmation, send_contact_notification, send_welcome_email, \
-    send_password_reset_email
+    send_password_reset_email, send_application_confirmation
 from services.paystack_service import initialize_payment, verify_payment as verify_paystack_payment
 
 load_dotenv()
@@ -110,6 +111,39 @@ class PasswordResetConfirm(BaseModel):
 class MediaUpload(BaseModel):
     title: str
     category: str
+
+
+class ApplicationForm(BaseModel):
+    # Personal Information
+    title: str
+    surname: str
+    firstName: str
+    middleName: Optional[str] = None
+    occupation: str
+    nationality: str
+    stateOfOrigin: str
+    gender: str
+    dateOfBirth: str
+    contactPhone: str
+    residentialAddress: str
+    email: EmailStr
+    maritalStatus: str
+    nationalIdNumber: str
+    taxIdNumber: Optional[str] = None
+    idType: str
+
+    # Next of Kin
+    nokName: str
+    nokAddress: str
+    nokPhone: str
+    nokRelationship: str
+    nokEmail: EmailStr
+
+    # Payment
+    sourceOfFund: str
+    floorLevel: str
+    paymentMode: str
+    installmentPeriod: Optional[str] = None
 
 
 # Helper Functions
@@ -373,6 +407,40 @@ async def submit_contact(contact: ContactMessage):
         raise HTTPException(status_code=400, detail=str(e))
 
 
+# Application Endpoints
+@app.post("/api/applications")
+async def submit_application(application: ApplicationForm):
+    """Submit application form"""
+    try:
+        applications_collection = get_applications_collection()
+
+        application_data = application.dict()
+        application_data["created_at"] = datetime.utcnow()
+        application_data["status"] = "pending"
+        application_data["application_fee_paid"] = False
+
+        result = await applications_collection.insert_one(application_data)
+        application_id = str(result.inserted_id)
+
+        # Send confirmation email to applicant
+        await send_application_confirmation({
+            "name": f"{application.title} {application.firstName} {application.surname}",
+            "email": application.email,
+            "application_id": application_id,
+            "floor_level": application.floorLevel,
+            "payment_mode": application.paymentMode,
+        })
+
+        return {
+            "success": True,
+            "message": "Application submitted successfully",
+            "applicationId": application_id
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
 # Admin Endpoints
 @app.post("/api/admin/login")
 async def admin_login(credentials: AdminLogin):
@@ -463,6 +531,7 @@ async def get_admin_stats(token: dict = Depends(verify_jwt_token)):
     bookings_collection = get_bookings_collection()
     transactions_collection = get_transactions_collection()
     messages_collection = get_messages_collection()
+    applications_collection = get_applications_collection()
 
     total_spaces = await spaces_collection.count_documents({})
     available_spaces = await spaces_collection.count_documents({"available": True})
@@ -473,6 +542,8 @@ async def get_admin_stats(token: dict = Depends(verify_jwt_token)):
         {"$group": {"_id": None, "total": {"$sum": "$amount"}}}
     ]).to_list(length=1)
     unread_messages = await messages_collection.count_documents({"status": "new"})
+    total_applications = await applications_collection.count_documents({})
+    pending_applications = await applications_collection.count_documents({"status": "pending"})
 
     return {
         "totalSpaces": total_spaces,
@@ -481,6 +552,8 @@ async def get_admin_stats(token: dict = Depends(verify_jwt_token)):
         "confirmedBookings": confirmed_bookings,
         "totalRevenue": total_revenue[0]["total"] if total_revenue else 0,
         "unreadMessages": unread_messages,
+        "totalApplications": total_applications,
+        "pendingApplications": pending_applications,
     }
 
 

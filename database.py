@@ -68,3 +68,7 @@ def get_messages_collection():
 
 def get_admins_collection():
     return database.admins
+
+
+def get_applications_collection():
+    return database.applications

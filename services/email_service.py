@@ -99,7 +99,8 @@ async def send_booking_confirmation(booking_data: dict):
             </div>
             <div class="footer">
                 <p>© 2025 Fombina Tower. All rights reserved.</p>
-                <p>Central Business District, Abuja, Nigeria</p>
+                <p>Plot 1839, Kur Muhd Avenue, CBD, FCT Abuja, Nigeria</p>
+                <p>Phone: 09028132452, 08163686368</p>
             </div>
         </div>
     </body>
@@ -176,7 +177,8 @@ async def send_welcome_email(user_data: dict):
             </div>
             <div class="footer">
                 <p>© 2025 Fombina Tower. All rights reserved.</p>
-                <p>Central Business District, Abuja, Nigeria</p>
+                <p>Plot 1839, Kur Muhd Avenue, CBD, FCT Abuja, Nigeria</p>
+                <p>Phone: 09028132452, 08163686368</p>
             </div>
         </div>
     </body>
@@ -226,7 +228,7 @@ async def send_password_reset_email(user_data: dict):
             </div>
             <div class="footer">
                 <p>© 2025 Fombina Tower. All rights reserved.</p>
-                <p>Central Business District, Abuja, Nigeria</p>
+                <p>Plot 1839, Kur Muhd Avenue, CBD, FCT Abuja, Nigeria</p>
             </div>
         </div>
     </body>
@@ -236,4 +238,80 @@ async def send_password_reset_email(user_data: dict):
     return await send_email(user_data['email'], subject, html_content)
 
 
+async def send_application_confirmation(application_data: dict):
+    """Send application confirmation email"""
+    subject = "Application Received - Fombina Tower"
 
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+            .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+            .header {{ background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); color: white; padding: 40px; text-align: center; }}
+            .content {{ background: #f9f9f9; padding: 30px; }}
+            .details {{ background: white; padding: 20px; margin: 20px 0; border-left: 4px solid #d4a574; }}
+            .footer {{ text-align: center; padding: 20px; color: #666; font-size: 12px; }}
+            .highlight {{ background: #d4a574; color: white; padding: 15px; text-align: center; border-radius: 5px; margin: 20px 0; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>Application Received!</h1>
+                <p>Thank you for your interest in Fombina Tower</p>
+            </div>
+            <div class="content">
+                <p>Dear {application_data['name']},</p>
+                <p>We have successfully received your application for a premium space at Fombina Tower.</p>
+
+                <div class="details">
+                    <h3>Application Summary</h3>
+                    <p><strong>Application ID:</strong> {application_data['application_id']}</p>
+                    <p><strong>Preferred Floor Level:</strong> {application_data['floor_level']}</p>
+                    <p><strong>Payment Mode:</strong> {application_data['payment_mode']}</p>
+                    <p><strong>Space Size:</strong> 49 Square Meters</p>
+                    <p><strong>Total Price:</strong> ₦360,000,000</p>
+                    <p><strong>Initial Deposit (40%):</strong> ₦144,000,000</p>
+                </div>
+
+                <div class="highlight">
+                    <h3 style="margin: 0;">Next Steps</h3>
+                </div>
+
+                <ol>
+                    <li><strong>Application Fee Payment:</strong> Pay the non-refundable application fee of ₦100,000</li>
+                    <li><strong>Document Verification:</strong> Our team will review your submitted documents</li>
+                    <li><strong>Letter of Offer:</strong> You will receive a Letter of Offer within 3-5 business days</li>
+                    <li><strong>Initial Deposit:</strong> Pay the 40% initial deposit as per the Letter of Offer</li>
+                    <li><strong>Letter of Allocation:</strong> Receive your Letter of Allocation after full payment</li>
+                </ol>
+
+                <p><strong>Important:</strong> Please ensure you have the following documents ready:</p>
+                <ul>
+                    <li>Valid means of identification (as specified in your application)</li>
+                    <li>Recent passport photographs (applicant and next of kin)</li>
+                    <li>Proof of source of funds</li>
+                </ul>
+
+                <p>Our team will contact you within 24-48 hours via email or phone to guide you through the next steps.</p>
+
+                <div style="background: #e8f4f8; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                    <p style="margin: 0;"><strong>Contact Us:</strong></p>
+                    <p style="margin: 5px 0;">📍 Plot 1839, Kur Muhd Avenue, CBD, FCT Abuja</p>
+                    <p style="margin: 5px 0;">📞 09028132452, 08163686368</p>
+                    <p style="margin: 5px 0;">✉️ info@fombinatower.com</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p><strong>Developed by:</strong> Eagle Track Local Content LTD</p>
+                <p><strong>Marketed by:</strong> Uloaku Ekwuribe & Partners</p>
+                <p style="margin-top: 15px;">© 2025 Fombina Tower. All rights reserved.</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+
+    return await send_email(application_data['email'], subject, html_content)
