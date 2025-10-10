@@ -94,7 +94,7 @@ async def send_booking_confirmation(booking_data: dict):
                 <p>Our team will contact you within 24 hours to finalize the details.</p>
 
                 <center>
-                    <a href="https://fombinatower.com/booking/{booking_data['booking_id']}" class="button">View Booking</a>
+                    <a href="https://fombinatower.vercel.app/booking/{booking_data['booking_id']}" class="button">View Booking</a>
                 </center>
             </div>
             <div class="footer">
@@ -171,7 +171,7 @@ async def send_welcome_email(user_data: dict):
                     <li>Stay updated on construction progress</li>
                 </ul>
                 <center>
-                    <a href="https://fombinatower.com/spaces" class="button">Explore Spaces</a>
+                    <a href="https://fombinatower.vercel.app/spaces" class="button">Explore Spaces</a>
                 </center>
                 <p>If you have any questions, feel free to contact our team.</p>
             </div>
@@ -192,7 +192,7 @@ async def send_password_reset_email(user_data: dict):
     """Send password reset email"""
     subject = "Reset Your Fombina Tower Password"
 
-    reset_url = f"https://fombinatower.com/reset-password?token={user_data['reset_token']}"
+    reset_url = f"https://fombinatower.vercel.app/reset-password?token={user_data['reset_token']}"
 
     html_content = f"""
     <!DOCTYPE html>

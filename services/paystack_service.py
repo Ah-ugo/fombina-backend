@@ -31,7 +31,7 @@ async def initialize_payment(email: str, amount: int, reference: str, metadata: 
             "email": email,
             "amount": amount,
             "reference": reference,
-            "callback_url": os.getenv("PAYSTACK_CALLBACK_URL", "https://fombinatower.com/booking/success"),
+            "callback_url": os.getenv("PAYSTACK_CALLBACK_URL", "https://fombinatower.vercel.app/booking/success"),
         }
 
         if metadata:
